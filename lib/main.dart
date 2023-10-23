@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 void main() {
   runApp(const MyApp());
@@ -29,20 +30,22 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   int count = 0;
-  int multiplier = 5;
+  int setSize = 5;
   int dailyTarget = 100;
+  TextEditingController _textController = TextEditingController(text: '10');
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       body: Column(
         children: [
-          const SizedBox(height: 100),
+          const SizedBox(height: 125),
           Text(
             'Daily Target : $dailyTarget',
             style: const TextStyle(fontSize: 28, fontWeight: FontWeight.w700),
           ),
-          const SizedBox(height: 150),
+          const SizedBox(height: 125),
           const Text(
             'Today\'s Push Ups',
             style: TextStyle(fontSize: 20, fontWeight: FontWeight.w700),
@@ -57,16 +60,25 @@ class _MyHomePageState extends State<MyHomePage> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               ElevatedButton(
-                  onPressed: () => subtractPushup(multiplier),
+                  onPressed: () => subtractPushup(setSize),
                   child: const Text(
                     '-',
                     style: TextStyle(fontSize: 35, fontWeight: FontWeight.w400),
                   )),
-              const SizedBox(
-                width: 50,
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: SizedBox(
+                  width: 50,
+                  child: TextField(
+                    controller: _textController,
+                    keyboardType: TextInputType.number,
+                    textAlign: TextAlign.center,
+                    onChanged: (value) => updateSetSize(),
+                  ),
+                ),
               ),
               ElevatedButton(
-                  onPressed: () => addPushup(multiplier),
+                  onPressed: () => addPushup(setSize),
                   child: const Text(
                     '+',
                     style: TextStyle(fontSize: 35, fontWeight: FontWeight.w400),
@@ -88,5 +100,14 @@ class _MyHomePageState extends State<MyHomePage> {
       count -= val;
     }
     setState(() {});
+  }
+
+  updateSetSize() {
+    if (_textController.text.length > 0) {
+      int val = int.parse(_textController.text);
+      print('Value = ' + val.toString());
+      setSize = val;
+      setState(() {});
+    }
   }
 }
