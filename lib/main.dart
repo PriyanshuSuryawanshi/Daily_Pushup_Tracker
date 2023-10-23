@@ -12,7 +12,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
         useMaterial3: true,
       ),
       home: const MyHomePage(),
@@ -29,6 +29,7 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   int count = 0;
+  int multiplier = 5;
 
   @override
   Widget build(BuildContext context) {
@@ -40,17 +41,17 @@ class _MyHomePageState extends State<MyHomePage> {
             'Today\'s Push Ups :',
             style: TextStyle(fontSize: 20, fontWeight: FontWeight.w700),
           ),
-          const SizedBox(height: 50),
+          const SizedBox(height: 60),
           Text(
             '$count',
             style: const TextStyle(fontSize: 50, fontWeight: FontWeight.w500),
           ),
-          const SizedBox(height: 50),
+          const SizedBox(height: 60),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               ElevatedButton(
-                  onPressed: subtractPushup,
+                  onPressed: () => subtractPushup(multiplier),
                   child: const Text(
                     '-',
                     style: TextStyle(fontSize: 35, fontWeight: FontWeight.w400),
@@ -59,7 +60,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 width: 50,
               ),
               ElevatedButton(
-                  onPressed: addPushup,
+                  onPressed: () => addPushup(multiplier),
                   child: const Text(
                     '+',
                     style: TextStyle(fontSize: 35, fontWeight: FontWeight.w400),
@@ -71,14 +72,14 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
-  addPushup() {
-    count += 1;
+  void addPushup(int val) {
+    count += val;
     setState(() {});
   }
 
-  subtractPushup() {
+  void subtractPushup(int val) {
     if (count > 0) {
-      count -= 1;
+      count -= val;
     }
     setState(() {});
   }
