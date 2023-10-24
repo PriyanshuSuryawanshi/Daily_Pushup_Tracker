@@ -1,3 +1,6 @@
+import 'dart:math';
+
+import 'package:confetti/confetti.dart';
 import 'package:flutter/material.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 
@@ -38,146 +41,163 @@ class _MyHomePageState extends State<MyHomePage> {
   final TextEditingController _textController =
       TextEditingController(text: '10');
 
+  final confettiController = ConfettiController();
+  @override
+  void dispose() {
+    super.dispose();
+    confettiController.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.black87,
-      resizeToAvoidBottomInset: false,
-      body: Column(
-        children: [
-          const SizedBox(height: 25),
-          // SETTINGS ICON
-          Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              Padding(
-                padding: const EdgeInsets.all(10.0),
-                child: IconButton(
-                  icon: const Icon(
-                    Icons.settings,
-                    color: Colors.blueGrey,
-                  ),
-                  iconSize: 30,
-                  onPressed: () {},
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 50),
-          Text(
-            'Daily Target : $dailyTarget',
-            style: const TextStyle(
-                fontSize: 28,
-                fontWeight: FontWeight.w700,
-                color: Colors.white70),
-          ),
-          const SizedBox(height: 25),
-
-          // PROGRESSBAR
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 40.0),
-            child: LinearPercentIndicator(
-              animation: true,
-              animateFromLastPercent: true,
-              animationDuration: 250,
-              barRadius: const Radius.circular(5),
-              lineHeight: 12.0,
-              percent: completionPercent,
-              backgroundColor: Colors.white70,
-              progressColor: Colors.deepOrange.shade800,
-            ),
-          ),
-          // TARGET ACHIEVED
-          const SizedBox(height: 15),
-          targetComplete
-              ? const Text(
-                  'Target Acheived! 💪🏻',
-                  style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.w700,
-                      color: Colors.white70),
-                )
-              : const Text('',
-                  style: TextStyle(
-                    fontSize: 20,
-                  )),
-          const SizedBox(height: 60),
-          const Text(
-            'Today\'s Push Ups',
-            style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.w700,
-                color: Colors.white70),
-          ),
-          const SizedBox(height: 40),
-
-          // CURRENT PUSHUPs COUNT
-          targetComplete
-              ? Text(
-                  '$count🔥',
-                  style: const TextStyle(
-                      fontSize: 50,
-                      fontWeight: FontWeight.w500,
-                      color: Colors.white70),
-                )
-              : Text(
-                  '$count',
-                  style: const TextStyle(
-                      fontSize: 50,
-                      fontWeight: FontWeight.w500,
-                      color: Colors.white70),
-                ),
-          const SizedBox(height: 20),
-
-          // Set SETSIZE
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Text('Set Size : ',
-                  style: TextStyle(fontSize: 20, color: Colors.white70)),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: SizedBox(
-                  width: 50,
-                  child: TextField(
-                    controller: _textController,
-                    keyboardType: TextInputType.number,
-                    textAlign: TextAlign.center,
-                    style: const TextStyle(
-                      color: Colors.white70,
+    return Stack(alignment: Alignment.topCenter, children: [
+      Scaffold(
+        backgroundColor: Colors.black87,
+        resizeToAvoidBottomInset: false,
+        body: Column(
+          children: [
+            const SizedBox(height: 25),
+            // SETTINGS ICON
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(10.0),
+                  child: IconButton(
+                    icon: const Icon(
+                      Icons.settings,
+                      color: Colors.blueGrey,
                     ),
-                    onChanged: (value) => updateSetSize(),
+                    iconSize: 30,
+                    onPressed: () {},
                   ),
                 ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 30),
+              ],
+            ),
+            const SizedBox(height: 50),
+            Text(
+              'Daily Target : $dailyTarget',
+              style: const TextStyle(
+                  fontSize: 28,
+                  fontWeight: FontWeight.w700,
+                  color: Colors.white70),
+            ),
+            const SizedBox(height: 25),
 
-          // INCREASE & DECREASE COUNTER
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              ElevatedButton(
-                  onPressed: () => subtractPushup(setSize),
-                  child: const Text(
-                    '-',
-                    style: TextStyle(fontSize: 35, fontWeight: FontWeight.w400),
-                  )),
-              const SizedBox(
-                width: 60,
+            // PROGRESSBAR
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 40.0),
+              child: LinearPercentIndicator(
+                animation: true,
+                animateFromLastPercent: true,
+                animationDuration: 250,
+                barRadius: const Radius.circular(5),
+                lineHeight: 12.0,
+                percent: completionPercent,
+                backgroundColor: Colors.white70,
+                progressColor: Colors.deepOrange.shade800,
               ),
-              ElevatedButton(
-                  onPressed: () => addPushup(setSize),
-                  child: const Text(
-                    '+',
-                    style: TextStyle(fontSize: 35, fontWeight: FontWeight.w400),
-                  )),
-            ],
-          ),
-        ],
+            ),
+            // TARGET ACHIEVED
+            const SizedBox(height: 15),
+            targetComplete
+                ? const Text(
+                    'Target Acheived! 💪🏻',
+                    style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.w700,
+                        color: Colors.white70),
+                  )
+                : const Text('',
+                    style: TextStyle(
+                      fontSize: 20,
+                    )),
+            const SizedBox(height: 60),
+            const Text(
+              'Today\'s Push Ups',
+              style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.w700,
+                  color: Colors.white70),
+            ),
+            const SizedBox(height: 40),
+
+            // CURRENT PUSHUPs COUNT
+            targetComplete
+                ? Text(
+                    '$count🔥',
+                    style: const TextStyle(
+                        fontSize: 50,
+                        fontWeight: FontWeight.w500,
+                        color: Colors.white70),
+                  )
+                : Text(
+                    '$count',
+                    style: const TextStyle(
+                        fontSize: 50,
+                        fontWeight: FontWeight.w500,
+                        color: Colors.white70),
+                  ),
+            const SizedBox(height: 20),
+
+            // Set SETSIZE
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Text('Set Size : ',
+                    style: TextStyle(fontSize: 20, color: Colors.white70)),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: SizedBox(
+                    width: 50,
+                    child: TextField(
+                      controller: _textController,
+                      keyboardType: TextInputType.number,
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(
+                        color: Colors.white70,
+                      ),
+                      onChanged: (value) => updateSetSize(),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 30),
+
+            // INCREASE & DECREASE COUNTER
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                ElevatedButton(
+                    onPressed: () => subtractPushup(setSize),
+                    child: const Text(
+                      '-',
+                      style:
+                          TextStyle(fontSize: 35, fontWeight: FontWeight.w400),
+                    )),
+                const SizedBox(
+                  width: 60,
+                ),
+                ElevatedButton(
+                    onPressed: () => addPushup(setSize),
+                    child: const Text(
+                      '+',
+                      style:
+                          TextStyle(fontSize: 35, fontWeight: FontWeight.w400),
+                    )),
+              ],
+            ),
+          ],
+        ),
       ),
-    );
+      ConfettiWidget(
+        gravity: 0.01,
+        confettiController: confettiController,
+        blastDirection: pi / 2,
+        numberOfParticles: 20,
+      ),
+    ]);
   }
 
   // METHODS
@@ -188,6 +208,9 @@ class _MyHomePageState extends State<MyHomePage> {
     if (completionPercent >= 1) {
       completionPercent = 1;
       targetComplete = true;
+    }
+    if (count == dailyTarget) {
+      celebrate();
     }
     setState(() {});
   }
@@ -215,5 +238,11 @@ class _MyHomePageState extends State<MyHomePage> {
       setSize = val;
       setState(() {});
     }
+  }
+
+  celebrate() async {
+    confettiController.play();
+    await Future.delayed(Duration(seconds: 2));
+    confettiController.stop();
   }
 }
