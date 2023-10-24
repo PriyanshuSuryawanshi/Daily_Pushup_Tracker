@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:percent_indicator/percent_indicator.dart';
 
 void main() {
   runApp(const PushUpApp());
@@ -32,6 +33,7 @@ class _MyHomePageState extends State<MyHomePage> {
   int count = 0;
   int setSize = 10;
   int dailyTarget = 100;
+  double completionPercent = 0;
   final TextEditingController _textController =
       TextEditingController(text: '10');
 
@@ -59,7 +61,7 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
             ],
           ),
-          const SizedBox(height: 75),
+          const SizedBox(height: 50),
           Text(
             'Daily Target : $dailyTarget',
             style: const TextStyle(
@@ -67,7 +69,21 @@ class _MyHomePageState extends State<MyHomePage> {
                 fontWeight: FontWeight.w700,
                 color: Colors.white70),
           ),
-          const SizedBox(height: 125),
+          const SizedBox(height: 25),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 40.0),
+            child: LinearPercentIndicator(
+              animation: true,
+              animateFromLastPercent: true,
+              animationDuration: 250,
+              barRadius: Radius.circular(5),
+              lineHeight: 12.0,
+              percent: completionPercent,
+              backgroundColor: Colors.white70,
+              progressColor: Colors.blue.shade400,
+            ),
+          ),
+          const SizedBox(height: 75),
           const Text(
             'Today\'s Push Ups',
             style: TextStyle(
@@ -75,7 +91,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 fontWeight: FontWeight.w700,
                 color: Colors.white70),
           ),
-          const SizedBox(height: 60),
+          const SizedBox(height: 40),
           Text(
             '$count',
             style: const TextStyle(
@@ -83,7 +99,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 fontWeight: FontWeight.w500,
                 color: Colors.white70),
           ),
-          // const SizedBox(height: 60),
+          const SizedBox(height: 20),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -106,7 +122,7 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
             ],
           ),
-          const SizedBox(height: 20),
+          const SizedBox(height: 30),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -134,6 +150,10 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void addPushup(int val) {
     count += val;
+    completionPercent = count / dailyTarget;
+    if (completionPercent > 1) {
+      completionPercent = 1;
+    }
     setState(() {});
   }
 
@@ -144,6 +164,10 @@ class _MyHomePageState extends State<MyHomePage> {
     if (count < 0) {
       count = 0;
     }
+    completionPercent = count / dailyTarget;
+    if (completionPercent > 1) {
+      completionPercent = 1;
+    }
     setState(() {});
   }
 
@@ -151,7 +175,6 @@ class _MyHomePageState extends State<MyHomePage> {
     // ignore: prefer_is_empty
     if (_textController.text.length > 0) {
       int val = int.parse(_textController.text);
-      // print('Value = ' + val.toString());
       setSize = val;
       setState(() {});
     }
