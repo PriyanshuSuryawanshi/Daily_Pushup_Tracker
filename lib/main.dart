@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(const PushUpApp());
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class PushUpApp extends StatelessWidget {
+  const PushUpApp({super.key});
 
   @override
   Widget build(BuildContext context) {
