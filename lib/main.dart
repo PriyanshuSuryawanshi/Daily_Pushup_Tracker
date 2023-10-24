@@ -80,7 +80,7 @@ class _MyHomePageState extends State<MyHomePage> {
               lineHeight: 12.0,
               percent: completionPercent,
               backgroundColor: Colors.white70,
-              progressColor: Colors.blue.shade400,
+              progressColor: Colors.deepOrange.shade800,
             ),
           ),
           const SizedBox(height: 75),
