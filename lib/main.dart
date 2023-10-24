@@ -45,6 +45,7 @@ class _MyHomePageState extends State<MyHomePage> {
       body: Column(
         children: [
           const SizedBox(height: 25),
+          // SETTINGS ICON
           Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
@@ -70,6 +71,8 @@ class _MyHomePageState extends State<MyHomePage> {
                 color: Colors.white70),
           ),
           const SizedBox(height: 25),
+
+          // PROGRESSBAR
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 40.0),
             child: LinearPercentIndicator(
@@ -92,6 +95,8 @@ class _MyHomePageState extends State<MyHomePage> {
                 color: Colors.white70),
           ),
           const SizedBox(height: 40),
+
+          // CURRENT PUSHUPs COUNT
           Text(
             '$count',
             style: const TextStyle(
@@ -100,6 +105,8 @@ class _MyHomePageState extends State<MyHomePage> {
                 color: Colors.white70),
           ),
           const SizedBox(height: 20),
+
+          // Set SETSIZE
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -123,6 +130,8 @@ class _MyHomePageState extends State<MyHomePage> {
             ],
           ),
           const SizedBox(height: 30),
+
+          // INCREASE & DECREASE COUNTER
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -147,6 +156,8 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
     );
   }
+
+  // METHODS
 
   void addPushup(int val) {
     count += val;
