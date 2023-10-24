@@ -34,6 +34,7 @@ class _MyHomePageState extends State<MyHomePage> {
   int setSize = 10;
   int dailyTarget = 100;
   double completionPercent = 0;
+  bool targetComplete = false;
   final TextEditingController _textController =
       TextEditingController(text: '10');
 
@@ -79,14 +80,28 @@ class _MyHomePageState extends State<MyHomePage> {
               animation: true,
               animateFromLastPercent: true,
               animationDuration: 250,
-              barRadius: Radius.circular(5),
+              barRadius: const Radius.circular(5),
               lineHeight: 12.0,
               percent: completionPercent,
               backgroundColor: Colors.white70,
               progressColor: Colors.deepOrange.shade800,
             ),
           ),
-          const SizedBox(height: 75),
+          // TARGET ACHIEVED
+          const SizedBox(height: 15),
+          targetComplete
+              ? const Text(
+                  'Target Acheived! 💪🏻',
+                  style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.w700,
+                      color: Colors.white70),
+                )
+              : const Text('',
+                  style: TextStyle(
+                    fontSize: 20,
+                  )),
+          const SizedBox(height: 60),
           const Text(
             'Today\'s Push Ups',
             style: TextStyle(
@@ -97,13 +112,21 @@ class _MyHomePageState extends State<MyHomePage> {
           const SizedBox(height: 40),
 
           // CURRENT PUSHUPs COUNT
-          Text(
-            '$count',
-            style: const TextStyle(
-                fontSize: 50,
-                fontWeight: FontWeight.w500,
-                color: Colors.white70),
-          ),
+          targetComplete
+              ? Text(
+                  '$count🔥',
+                  style: const TextStyle(
+                      fontSize: 50,
+                      fontWeight: FontWeight.w500,
+                      color: Colors.white70),
+                )
+              : Text(
+                  '$count',
+                  style: const TextStyle(
+                      fontSize: 50,
+                      fontWeight: FontWeight.w500,
+                      color: Colors.white70),
+                ),
           const SizedBox(height: 20),
 
           // Set SETSIZE
@@ -162,8 +185,9 @@ class _MyHomePageState extends State<MyHomePage> {
   void addPushup(int val) {
     count += val;
     completionPercent = count / dailyTarget;
-    if (completionPercent > 1) {
+    if (completionPercent >= 1) {
       completionPercent = 1;
+      targetComplete = true;
     }
     setState(() {});
   }
@@ -176,8 +200,10 @@ class _MyHomePageState extends State<MyHomePage> {
       count = 0;
     }
     completionPercent = count / dailyTarget;
-    if (completionPercent > 1) {
+    if (completionPercent >= 1) {
       completionPercent = 1;
+    } else {
+      targetComplete = false;
     }
     setState(() {});
   }
