@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:confetti/confetti.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 
@@ -56,17 +57,28 @@ class _MyHomePageState extends State<MyHomePage> {
         resizeToAvoidBottomInset: false,
         body: Column(
           children: [
-            const SizedBox(height: 25),
-            // SETTINGS ICON
+            const SizedBox(height: 35),
+            // SETTINGS AND GRAPH ICON
             Row(
-              mainAxisAlignment: MainAxisAlignment.end,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Padding(
                   padding: const EdgeInsets.all(10.0),
                   child: IconButton(
                     icon: const Icon(
                       Icons.settings,
-                      color: Colors.blueGrey,
+                      color: Colors.white70,
+                    ),
+                    iconSize: 30,
+                    onPressed: () {},
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(10.0),
+                  child: IconButton(
+                    icon: const Icon(
+                      CupertinoIcons.graph_circle,
+                      color: Colors.white70,
                     ),
                     iconSize: 30,
                     onPressed: () {},
@@ -191,6 +203,8 @@ class _MyHomePageState extends State<MyHomePage> {
           ],
         ),
       ),
+
+      //CONFETTI
       ConfettiWidget(
         gravity: 0.01,
         confettiController: confettiController,
@@ -242,7 +256,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   celebrate() async {
     confettiController.play();
-    await Future.delayed(Duration(seconds: 2));
+    await Future.delayed(const Duration(seconds: 2));
     confettiController.stop();
   }
 }
