@@ -1,6 +1,8 @@
 import 'dart:math';
 
 import 'package:confetti/confetti.dart';
+import 'package:daily_pushup_tracker/screens/analytics_screen.dart';
+import 'package:daily_pushup_tracker/screens/settings_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
@@ -78,7 +80,10 @@ class _MyHomePageState extends State<MyHomePage> {
                       color: Colors.white70,
                     ),
                     iconSize: 30,
-                    onPressed: () {},
+                    onPressed: () {
+                      Navigator.of(context).push(MaterialPageRoute(
+                          builder: (context) => SettingsScreen()));
+                    },
                   ),
                 ),
                 Padding(
@@ -89,7 +94,10 @@ class _MyHomePageState extends State<MyHomePage> {
                       color: Colors.white70,
                     ),
                     iconSize: 30,
-                    onPressed: () {},
+                    onPressed: () {
+                      Navigator.of(context).push(MaterialPageRoute(
+                          builder: (context) => AnalyticsScreen()));
+                    },
                   ),
                 ),
               ],
