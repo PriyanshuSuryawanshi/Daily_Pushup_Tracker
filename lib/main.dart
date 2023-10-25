@@ -3,9 +3,17 @@ import 'dart:math';
 import 'package:confetti/confetti.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 
-void main() {
+import 'database/boxes.dart';
+import 'database/pushupdata.dart';
+
+void main() async {
+  await Hive.initFlutter();
+  Hive.registerAdapter(PushupDataAdapter());
+  boxPushups = await Hive.openBox<PushupData>('pushupBox');
+
   runApp(const PushUpApp());
 }
 
@@ -92,7 +100,7 @@ class _MyHomePageState extends State<MyHomePage> {
               style: const TextStyle(
                   fontSize: 28,
                   fontWeight: FontWeight.w700,
-                  color: Colors.white70),
+                  color: Colors.white),
             ),
             const SizedBox(height: 25),
 
@@ -118,7 +126,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     style: TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.w700,
-                        color: Colors.white70),
+                        color: Colors.white),
                   )
                 : const Text('',
                     style: TextStyle(
@@ -141,14 +149,14 @@ class _MyHomePageState extends State<MyHomePage> {
                     style: const TextStyle(
                         fontSize: 50,
                         fontWeight: FontWeight.w500,
-                        color: Colors.white70),
+                        color: Colors.white),
                   )
                 : Text(
                     '$count',
                     style: const TextStyle(
                         fontSize: 50,
                         fontWeight: FontWeight.w500,
-                        color: Colors.white70),
+                        color: Colors.white),
                   ),
             const SizedBox(height: 20),
 
