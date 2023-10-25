@@ -15,8 +15,51 @@ void main() async {
   await Hive.initFlutter();
   Hive.registerAdapter(PushupDataAdapter());
   boxPushups = await Hive.openBox<PushupData>('pushupBox');
+  await addTodayToDatabase();
+  await printDatabaseContents();
 
   runApp(const PushUpApp());
+}
+
+Future<void> addTodayToDatabase() async {
+  final DateTime today = DateTime.now();
+  final DateTime midnight = DateTime(today.year, today.month, today.day);
+
+  try {
+    // Attempt to find an entry for today's date
+    boxPushups.values.firstWhere((data) => data.date == midnight);
+  } catch (e) {
+    print('Error initializing Hive: $e');
+    final newEntry = PushupData(date: midnight, count: 0);
+    boxPushups.add(newEntry);
+    print('Added today\'s date to the database: $midnight, Count: 0');
+  }
+}
+
+Future<void> updateDatabaseCount(int newCount) async {
+  final DateTime today = DateTime.now();
+  final DateTime midnight = DateTime(today.year, today.month, today.day);
+
+  final pushupDataList = boxPushups.values.toList();
+
+  for (final pushupData in pushupDataList) {
+    if (pushupData.date == midnight) {
+      pushupData.count = newCount;
+      await pushupData.save(); // Save the updated PushupData to the database
+      // print('New count : $newCount');
+      break; // No need to continue searching once we found today's entry
+    }
+  }
+}
+
+Future<void> printDatabaseContents() async {
+  final pushupDataList = boxPushups.values.toList();
+
+  print('Database : ');
+
+  for (final pushupData in pushupDataList) {
+    print('Date: ${pushupData.date}, Count: ${pushupData.count}');
+  }
 }
 
 class PushUpApp extends StatelessWidget {
@@ -53,6 +96,18 @@ class _MyHomePageState extends State<MyHomePage> {
       TextEditingController(text: '10');
 
   final confettiController = ConfettiController();
+
+  @override
+  void initState() {
+    super.initState();
+    getCountFromDatabase(); // Fetch the count value from the database
+    completionPercent = count / dailyTarget;
+    if (completionPercent >= 1) {
+      completionPercent = 1;
+      targetComplete = true;
+    }
+  }
+
   @override
   void dispose() {
     super.dispose();
@@ -232,6 +287,22 @@ class _MyHomePageState extends State<MyHomePage> {
 
   // METHODS
 
+  Future<void> getCountFromDatabase() async {
+    final DateTime today = DateTime.now();
+    final DateTime midnight = DateTime(today.year, today.month, today.day);
+
+    final pushupDataList = boxPushups.values.toList();
+
+    for (final pushupData in pushupDataList) {
+      if (pushupData.date == midnight) {
+        setState(() {
+          count = pushupData.count; // Set the count from the database
+        });
+        break; // No need to continue searching once we found today's entry
+      }
+    }
+  }
+
   void addPushup(int val) {
     count += val;
     completionPercent = count / dailyTarget;
@@ -243,6 +314,7 @@ class _MyHomePageState extends State<MyHomePage> {
       celebrate();
     }
     setState(() {});
+    updateDatabaseCount(count);
   }
 
   void subtractPushup(int val) {
@@ -259,6 +331,7 @@ class _MyHomePageState extends State<MyHomePage> {
       targetComplete = false;
     }
     setState(() {});
+    updateDatabaseCount(count);
   }
 
   updateSetSize() {
