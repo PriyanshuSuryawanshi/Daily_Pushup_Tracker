@@ -3,14 +3,14 @@ import 'package:hive/hive.dart';
 part 'pushupdata.g.dart';
 
 @HiveType(typeId: 1)
-class PushupData {
+class PushupData extends HiveObject {
   PushupData({
     required this.date,
     required this.count,
   });
 
   @HiveField(0)
-  String date;
+  DateTime date;
 
   @HiveField(1)
   int count;

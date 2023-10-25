@@ -17,7 +17,7 @@ class PushupDataAdapter extends TypeAdapter<PushupData> {
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
     return PushupData(
-      date: fields[0] as String,
+      date: fields[0] as DateTime,
       count: fields[1] as int,
     );
   }
