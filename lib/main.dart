@@ -45,9 +45,9 @@ Future<void> updateDatabaseCount(int newCount) async {
   for (final pushupData in pushupDataList) {
     if (pushupData.date == midnight) {
       pushupData.count = newCount;
-      await pushupData.save(); // Save the updated PushupData to the database
+      await pushupData.save();
       // print('New count : $newCount');
-      break; // No need to continue searching once we found today's entry
+      break;
     }
   }
 }
@@ -100,7 +100,7 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   void initState() {
     super.initState();
-    getCountFromDatabase(); // Fetch the count value from the database
+    getCountFromDatabase();
     completionPercent = count / dailyTarget;
     if (completionPercent >= 1) {
       completionPercent = 1;
@@ -137,7 +137,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     iconSize: 30,
                     onPressed: () {
                       Navigator.of(context).push(MaterialPageRoute(
-                          builder: (context) => SettingsScreen()));
+                          builder: (context) => const SettingsScreen()));
                     },
                   ),
                 ),
@@ -296,23 +296,24 @@ class _MyHomePageState extends State<MyHomePage> {
     for (final pushupData in pushupDataList) {
       if (pushupData.date == midnight) {
         setState(() {
-          count = pushupData.count; // Set the count from the database
+          count = pushupData.count;
         });
-        break; // No need to continue searching once we found today's entry
+        break;
       }
     }
   }
 
   void addPushup(int val) {
+    if (count < dailyTarget && (count + val) >= dailyTarget) {
+      celebrate();
+    }
     count += val;
     completionPercent = count / dailyTarget;
     if (completionPercent >= 1) {
       completionPercent = 1;
       targetComplete = true;
     }
-    if (count == dailyTarget) {
-      celebrate();
-    }
+
     setState(() {});
     updateDatabaseCount(count);
   }
