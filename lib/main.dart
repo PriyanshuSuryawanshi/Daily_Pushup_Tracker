@@ -16,7 +16,7 @@ void main() async {
   Hive.registerAdapter(PushupDataAdapter());
   boxPushups = await Hive.openBox<PushupData>('pushupBox');
   await addTodayToDatabase();
-  await printDatabaseContents();
+  // await printDatabaseContents();
 
   runApp(const PushUpApp());
 }
@@ -52,15 +52,15 @@ Future<void> updateDatabaseCount(int newCount) async {
   }
 }
 
-Future<void> printDatabaseContents() async {
-  final pushupDataList = boxPushups.values.toList();
+// Future<void> printDatabaseContents() async {
+//   final pushupDataList = boxPushups.values.toList();
 
-  print('Database : ');
+//   print('Database : ');
 
-  for (final pushupData in pushupDataList) {
-    print('Date: ${pushupData.date}, Count: ${pushupData.count}');
-  }
-}
+//   for (final pushupData in pushupDataList) {
+//     print('Date: ${pushupData.date}, Count: ${pushupData.count}');
+//   }
+// }
 
 class PushUpApp extends StatelessWidget {
   const PushUpApp({super.key});
