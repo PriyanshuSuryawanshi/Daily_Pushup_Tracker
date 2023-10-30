@@ -1,8 +1,6 @@
 import 'package:daily_pushup_tracker/database/pushupdata.dart';
-import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:intl/intl.dart'; // Import intl package
 
 class AnalyticsScreen extends StatefulWidget {
   @override
@@ -27,8 +25,10 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
       pushupDataList = data;
     });
     for (final pushupData in pushupDataList) {
-      dateList.add(pushupData.date);
-      countList.add(pushupData.count);
+      if (pushupData.count != 0) {
+        dateList.add(pushupData.date);
+        countList.add(pushupData.count);
+      }
     }
     if (dateList.length > 7) {
       dateList = dateList.sublist(dateList.length - 7);
@@ -38,59 +38,45 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
     print(dateList);
     print('Count :- ');
     print(countList);
-    // print('Date: ${pushupData.date}, Count: ${pushupData.count}');
+  }
+
+  double maxcount() {
+    int max = 0;
+    for (final count in countList) {
+      if (count > max) {
+        max = count;
+      }
+    }
+    return max.toDouble();
+  }
+
+  double mincount() {
+    int min = countList.isNotEmpty ? countList[0] : 0;
+    for (final count in countList) {
+      if (count < min) {
+        min = count;
+      }
+    }
+    return min.toDouble();
   }
 
   @override
   Widget build(BuildContext context) {
     Size screenSize = MediaQuery.of(context).size;
     return Scaffold(
-      appBar: AppBar(
+        // appBar: AppBar(
+        //   backgroundColor: Colors.grey.shade900,
+        //   title: const Text(
+        //     'Analytics Screen',
+        //     style: TextStyle(color: Colors.white),
+        //   ),
+        // ),
         backgroundColor: Colors.grey.shade900,
-        title: const Text(
-          'Analytics Screen',
-          style: TextStyle(color: Colors.white),
-        ),
-      ),
-      backgroundColor: Colors.black,
-      body: Container(
-        padding: EdgeInsets.all(15),
-        decoration: const BoxDecoration(
-          border: Border(
-            bottom: BorderSide(
-              color: Color(0xff37434d),
-              width: 1.0,
-            ),
+        body: Center(
+          child: Text(
+            'A - Screen',
+            style: TextStyle(color: Colors.white),
           ),
-        ),
-        child: SizedBox(
-          height: screenSize.height * 0.4,
-          width: screenSize.width * 0.8,
-          child: LineChart(
-            LineChartData(
-              gridData: const FlGridData(show: false),
-              titlesData: const FlTitlesData(show: false),
-              minX: 0,
-              maxX: dateList.length - 1,
-              minY: 0,
-              maxY: 150,
-              lineBarsData: [
-                LineChartBarData(
-                  spots: countList
-                      .asMap()
-                      .entries
-                      .map((entry) =>
-                          FlSpot(entry.key.toDouble(), entry.value.toDouble()))
-                      .toList(),
-                  isCurved: true,
-                  color: Colors.blue,
-                  dotData: const FlDotData(show: false),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
+        ));
   }
 }
