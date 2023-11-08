@@ -29,10 +29,10 @@ Future<void> addTodayToDatabase() async {
     // Attempt to find an entry for today's date
     boxPushups.values.firstWhere((data) => data.date == midnight);
   } catch (e) {
-    print('Error initializing Hive: $e');
+    // print('Error initializing Hive: $e');
     final newEntry = PushupData(date: midnight, count: 0);
     boxPushups.add(newEntry);
-    print('Added today\'s date to the database: $midnight, Count: 0');
+    // print('Added today\'s date to the database: $midnight, Count: 0');
   }
 }
 
@@ -151,7 +151,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     iconSize: 30,
                     onPressed: () {
                       Navigator.of(context).push(MaterialPageRoute(
-                          builder: (context) => AnalyticsScreen()));
+                          builder: (context) => const AnalyticsScreen()));
                     },
                   ),
                 ),
