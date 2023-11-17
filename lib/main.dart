@@ -2,7 +2,6 @@ import 'dart:math';
 
 import 'package:confetti/confetti.dart';
 import 'package:daily_pushup_tracker/screens/analytics_screen.dart';
-import 'package:daily_pushup_tracker/screens/settings_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
@@ -23,7 +22,7 @@ void main() async {
   // print('check1');
   await initImpValues();
   // print('check2');
-  // await printIMPVALUESDatabaseContents();
+  await printIMPVALUESDatabaseContents();
   // print('check3');
 
   runApp(const PushUpApp());
@@ -49,6 +48,7 @@ Future<void> initImpValues() async {
     boximportantValues.values.firstWhere((data) => data.field == 'setsize');
   } catch (e) {
     // print('Error initializing Hive: $e');
+    print('Old IMP_VALUES database not found');
     final newEntry = ImpValuesData(field: 'setsize', value: 10);
     boximportantValues.add(newEntry);
     final newEntry2 = ImpValuesData(field: 'dailytarget', value: 100);
@@ -81,14 +81,14 @@ Future<void> updatePushupCount(int newCount) async {
 //   }
 // }
 
-// Future<void> printIMPVALUESDatabaseContents() async {
-//   final impDataList = boximportantValues.values.toList();
-//   print('Database : ');
-//   for (final impData in impDataList) {
-//     print('Field: ${impData.field}, Value: ${impData.value}');
-//   }
-//   print('funtion check');
-// }
+Future<void> printIMPVALUESDatabaseContents() async {
+  final impDataList = boximportantValues.values.toList();
+  print('Database : ');
+  for (final impData in impDataList) {
+    print('Field: ${impData.field}, Value: ${impData.value}');
+  }
+  print('funtion check');
+}
 
 class PushUpApp extends StatelessWidget {
   const PushUpApp({super.key});
@@ -168,8 +168,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     ),
                     iconSize: 30,
                     onPressed: () {
-                      Navigator.of(context).push(MaterialPageRoute(
-                          builder: (context) => const SettingsScreen()));
+                      _showPopupMenu(context);
                     },
                   ),
                 ),
@@ -319,6 +318,54 @@ class _MyHomePageState extends State<MyHomePage> {
 
   // METHODS
 
+  void _showPopupMenu(BuildContext context) async {
+    String? selectedItem = await showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          backgroundColor: Colors.grey[900],
+          title: Text(
+            'Settings',
+            style: TextStyle(color: Colors.white),
+          ),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              ListTile(
+                title: Text(
+                  'Change Target',
+                  style: TextStyle(color: Colors.white),
+                ),
+                onTap: () {
+                  _showTargetDialog(context);
+                },
+              ),
+              ListTile(
+                title: Text(
+                  'Change Set Size',
+                  style: TextStyle(color: Colors.white),
+                ),
+                onTap: () {
+                  _showSetSizeDialog(context);
+                },
+              ),
+            ],
+          ),
+        );
+      },
+    );
+
+    // Ensure that selectedItem is not null before using it
+    if (selectedItem != null) {
+      // Handle the selected item
+      if (selectedItem == 'change_target') {
+        _showTargetDialog(context);
+      } else if (selectedItem == 'change_set_size') {
+        _showSetSizeDialog(context);
+      }
+    }
+  }
+
   Future<void> getCountFromDatabase() async {
     final DateTime today = DateTime.now();
     final DateTime midnight = DateTime(today.year, today.month, today.day);
@@ -401,5 +448,163 @@ class _MyHomePageState extends State<MyHomePage> {
     confettiController.play();
     await Future.delayed(const Duration(seconds: 2));
     confettiController.stop();
+  }
+
+  void _showTargetDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        int newTarget = 0;
+
+        return AlertDialog(
+          backgroundColor: Colors.grey[900],
+          title: Text(
+            'Change Target',
+            style: TextStyle(color: Colors.white),
+          ),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                'Enter new daily target:',
+                style: TextStyle(color: Colors.white70),
+              ),
+              SizedBox(height: 10),
+              TextField(
+                keyboardType: TextInputType.number,
+                style: TextStyle(color: Colors.white),
+                decoration: InputDecoration(
+                  border: OutlineInputBorder(),
+                  fillColor: Colors.grey[800],
+                  filled: true,
+                ),
+                onChanged: (value) {
+                  newTarget = int.tryParse(value) ?? 0;
+                },
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text(
+                'Cancel',
+                style: TextStyle(color: Colors.white),
+              ),
+            ),
+            TextButton(
+              onPressed: () {
+                // Retrieve the existing ImpValuesData from the Hive box
+                ImpValuesData existingData =
+                    boximportantValues.get('dailytarget');
+
+                // Update the target value
+                existingData.value = newTarget;
+
+                // Save the updated object back to the Hive box
+                boximportantValues.put('dailytarget', existingData);
+
+                // Update the state to reflect the changes
+                setState(() {
+                  dailyTarget = newTarget;
+                  completionPercent = count / dailyTarget;
+                  if (completionPercent >= 1) {
+                    completionPercent = 1;
+                    targetComplete = true;
+                  }
+                });
+
+                Navigator.of(context).pop();
+              },
+              child: Text(
+                'OK',
+                style: TextStyle(color: Colors.white),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _showSetSizeDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        int newSize = 0;
+
+        return AlertDialog(
+          backgroundColor: Colors.grey[900],
+          title: Text(
+            'Change Set Size',
+            style: TextStyle(color: Colors.white),
+          ),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                'Enter new set size:',
+                style: TextStyle(color: Colors.white70),
+              ),
+              SizedBox(height: 10),
+              TextField(
+                keyboardType: TextInputType.number,
+                style: TextStyle(color: Colors.white),
+                decoration: InputDecoration(
+                  border: OutlineInputBorder(),
+                  fillColor: Colors.grey[800],
+                  filled: true,
+                ),
+                onChanged: (value) {
+                  newSize = int.tryParse(value) ?? 0;
+                },
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text(
+                'Cancel',
+                style: TextStyle(color: Colors.white),
+              ),
+            ),
+            TextButton(
+              onPressed: () {
+                // Retrieve the existing ImpValuesData from the Hive box
+                ImpValuesData? existingData = boximportantValues.get('setsize');
+
+                if (existingData != null) {
+                  print('Key Found');
+                  // Update the set size value
+                  existingData.value = newSize;
+
+                  // Save the updated object back to the Hive box
+                  boximportantValues.put('setsize', existingData.value);
+
+                  // Update the state to reflect the changes
+                  _setSizeController =
+                      TextEditingController(text: newSize.toString());
+
+                  setState(() {});
+                } else {
+                  print('Key Not Found');
+                }
+
+                Navigator.of(context).pop();
+              },
+              child: Text(
+                'OK',
+                style: TextStyle(color: Colors.white),
+              ),
+            ),
+          ],
+        );
+      },
+    );
   }
 }
