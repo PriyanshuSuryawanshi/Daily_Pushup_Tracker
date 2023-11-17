@@ -15,8 +15,15 @@ void main() async {
   await Hive.initFlutter();
   Hive.registerAdapter(PushupDataAdapter());
   boxPushups = await Hive.openBox<PushupData>('pushupBox');
+  boximportantValues = await Hive.openBox<ImpValuesData>('impValuesBox');
   await addTodayToDatabase();
   // await printDatabaseContents();
+
+  print('check1');
+  await initImpValues();
+  print('check2');
+  await printIMPVALUESDatabaseContents();
+  print('check3');
 
   runApp(const PushUpApp());
 }
@@ -32,11 +39,24 @@ Future<void> addTodayToDatabase() async {
     // print('Error initializing Hive: $e');
     final newEntry = PushupData(date: midnight, count: 0);
     boxPushups.add(newEntry);
-    // print('Added today\'s date to the database: $midnight, Count: 0');
   }
 }
 
-Future<void> updateDatabaseCount(int newCount) async {
+Future<void> initImpValues() async {
+  try {
+    // Attempt to find an entry for 'setsize'
+    boximportantValues.values.firstWhere((data) => data.field == 'setsize');
+  } catch (e) {
+    // print('Error initializing Hive: $e');
+    final newEntry = ImpValuesData(field: 'setsize', value: 10);
+    boximportantValues.add(newEntry);
+    final newEntry2 = ImpValuesData(field: 'dailytarget', value: 100);
+    boximportantValues.add(newEntry2);
+    print('Added setsize and dailytarget to the database');
+  }
+}
+
+Future<void> updatePushupCount(int newCount) async {
   final DateTime today = DateTime.now();
   final DateTime midnight = DateTime(today.year, today.month, today.day);
 
@@ -54,13 +74,20 @@ Future<void> updateDatabaseCount(int newCount) async {
 
 // Future<void> printDatabaseContents() async {
 //   final pushupDataList = boxPushups.values.toList();
-
 //   print('Database : ');
-
 //   for (final pushupData in pushupDataList) {
 //     print('Date: ${pushupData.date}, Count: ${pushupData.count}');
 //   }
 // }
+
+Future<void> printIMPVALUESDatabaseContents() async {
+  final impDataList = boximportantValues.values.toList();
+  print('Database : ');
+  for (final impData in impDataList) {
+    print('Field: ${impData.field}, Value: ${impData.value}');
+  }
+  print('funtion check');
+}
 
 class PushUpApp extends StatelessWidget {
   const PushUpApp({super.key});
@@ -92,15 +119,17 @@ class _MyHomePageState extends State<MyHomePage> {
   int dailyTarget = 100;
   double completionPercent = 0;
   bool targetComplete = false;
-  final TextEditingController _textController =
-      TextEditingController(text: '10');
+  TextEditingController _setSizeController = TextEditingController(text: '10');
 
   final confettiController = ConfettiController();
 
   @override
   void initState() {
     super.initState();
+    // print('check4');
     getCountFromDatabase();
+    getIMPvaluesFromDatabase();
+    _setSizeController = TextEditingController(text: setSize.toString());
     completionPercent = count / dailyTarget;
     if (completionPercent >= 1) {
       completionPercent = 1;
@@ -119,6 +148,8 @@ class _MyHomePageState extends State<MyHomePage> {
     return Stack(alignment: Alignment.topCenter, children: [
       Scaffold(
         backgroundColor: Colors.black87,
+        // backgroundColor: Colors.grey.shade900,
+
         resizeToAvoidBottomInset: false,
         body: Column(
           children: [
@@ -234,7 +265,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   child: SizedBox(
                     width: 50,
                     child: TextField(
-                      controller: _textController,
+                      controller: _setSizeController,
                       keyboardType: TextInputType.number,
                       textAlign: TextAlign.center,
                       style: const TextStyle(
@@ -303,6 +334,27 @@ class _MyHomePageState extends State<MyHomePage> {
     }
   }
 
+  Future<void> getIMPvaluesFromDatabase() async {
+    int db_setsize;
+    int db_dailytarget;
+
+    final impValuesList = boximportantValues.values.toList();
+
+    for (final impData in impValuesList) {
+      if (impData.fiels == 'setsize') {
+        db_setsize = impData.value;
+        setSize = db_setsize;
+        setState(() {});
+        print('Set Size Retrieved');
+      } else if (impData.fiels == 'dailytarget') {
+        db_dailytarget = impData.value;
+        dailyTarget = db_dailytarget;
+        setState(() {});
+        print('Daily Target Retrieved');
+      }
+    }
+  }
+
   void addPushup(int val) {
     if (count < dailyTarget && (count + val) >= dailyTarget) {
       celebrate();
@@ -315,7 +367,7 @@ class _MyHomePageState extends State<MyHomePage> {
     }
 
     setState(() {});
-    updateDatabaseCount(count);
+    updatePushupCount(count);
   }
 
   void subtractPushup(int val) {
@@ -332,13 +384,13 @@ class _MyHomePageState extends State<MyHomePage> {
       targetComplete = false;
     }
     setState(() {});
-    updateDatabaseCount(count);
+    updatePushupCount(count);
   }
 
   updateSetSize() {
     // ignore: prefer_is_empty
-    if (_textController.text.length > 0) {
-      int val = int.parse(_textController.text);
+    if (_setSizeController.text.length > 0) {
+      int val = int.parse(_setSizeController.text);
       setSize = val;
       setState(() {});
     }

@@ -36,16 +36,8 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
         countList.add(pushupData.count);
       }
     }
-    // if (dateList.length > 10) {
-    //   dateList = dateList.sublist(dateList.length - 10);
-    //   countList = countList.sublist(countList.length - 10);
-    // }
     dateList = List.from(dateList.reversed);
     countList = List.from(countList.reversed);
-    // print('Dates :- ');
-    // print(dateList);
-    // print('Count :- ');
-    // print(countList);
   }
 
   double maxcount() {
@@ -87,78 +79,81 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
     Size screenSize = MediaQuery.of(context).size;
     return Scaffold(
       backgroundColor: Colors.grey.shade900,
+      // backgroundColor: Colors.black87,
       body: SafeArea(
-        child: Column(
-          children: [
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 15),
-              child: SizedBox(
-                width: screenSize.width,
-                // height: screenSize.height * 0.4,
-                child: Column(
-                  children: [
-                    const SizedBox(
-                      height: 35,
-                    ),
-                    Row(
-                      children: [
-                        AnalyticsCard(
-                          displayText: 'Till Today',
-                          value: totalcount(),
-                        ),
-                        AnalyticsCard(
-                          value: maxcount(),
-                          displayText: 'Highest',
-                        ),
-                      ],
-                    ),
-                    const SizedBox(
-                      height: 15,
-                    ),
-                    Row(
-                      children: [
-                        AnalyticsCard(
-                          displayText: 'Average',
-                          value: averagecount(),
-                        ),
-                        AnalyticsCard(
-                          value: successRate(),
-                          displayText: 'Success %',
-                        ),
-                      ],
-                    ),
-                    const SizedBox(
-                      height: 25,
-                    ),
-                  ],
-                ),
-              ),
-            ),
-
-            //PushUp cards
-
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 15),
-              child: SizedBox(
-                width: screenSize.width,
-                height: screenSize.height * 0.575,
-                child: (dateList.isNotEmpty)
-                    ? ListView.builder(
-                        itemCount: dateList.length,
-                        itemBuilder: (context, index) {
-                          return PushUpDataCard(
-                            date: dateList[index],
-                            count: countList[index],
-                          );
-                        },
-                      )
-                    : const Column(
-                        children: [Text('Not Enough Data')],
+        child: (dateList.isNotEmpty)
+            ? Column(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 15),
+                    child: SizedBox(
+                      width: screenSize.width,
+                      child: Column(
+                        children: [
+                          const SizedBox(
+                            height: 35,
+                          ),
+                          Row(
+                            children: [
+                              AnalyticsCard(
+                                displayText: 'Till Today',
+                                value: totalcount(),
+                              ),
+                              AnalyticsCard(
+                                displayText: 'Highest',
+                                value: maxcount(),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(
+                            height: 15,
+                          ),
+                          Row(
+                            children: [
+                              AnalyticsCard(
+                                displayText: 'Average',
+                                value: averagecount(),
+                              ),
+                              AnalyticsCard(
+                                displayText: 'Success %',
+                                value: successRate(),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(
+                            height: 25,
+                          ),
+                        ],
                       ),
+                    ),
+                  ),
+
+                  //PushUp cards
+
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 15),
+                    child: SizedBox(
+                        width: screenSize.width,
+                        height: screenSize.height * 0.575,
+                        child: ListView.builder(
+                          itemCount: dateList.length,
+                          itemBuilder: (context, index) {
+                            return PushUpDataCard(
+                              date: dateList[index],
+                              count: countList[index],
+                            );
+                          },
+                        )),
+                  ),
+                ],
+              )
+            : const Center(
+                child: Text('Not Enough Data Yet',
+                    style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.w700,
+                        color: Colors.white70)),
               ),
-            ),
-          ],
-        ),
       ),
     );
   }
