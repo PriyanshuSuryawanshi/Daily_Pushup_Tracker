@@ -14,16 +14,17 @@ import 'database/pushupdata.dart';
 void main() async {
   await Hive.initFlutter();
   Hive.registerAdapter(PushupDataAdapter());
+  Hive.registerAdapter(ImpValuesDataAdapter());
   boxPushups = await Hive.openBox<PushupData>('pushupBox');
   boximportantValues = await Hive.openBox<ImpValuesData>('impValuesBox');
   await addTodayToDatabase();
   // await printDatabaseContents();
 
-  print('check1');
+  // print('check1');
   await initImpValues();
-  print('check2');
-  await printIMPVALUESDatabaseContents();
-  print('check3');
+  // print('check2');
+  // await printIMPVALUESDatabaseContents();
+  // print('check3');
 
   runApp(const PushUpApp());
 }
@@ -52,7 +53,7 @@ Future<void> initImpValues() async {
     boximportantValues.add(newEntry);
     final newEntry2 = ImpValuesData(field: 'dailytarget', value: 100);
     boximportantValues.add(newEntry2);
-    print('Added setsize and dailytarget to the database');
+    // print('Added setsize and dailytarget to the database');
   }
 }
 
@@ -80,14 +81,14 @@ Future<void> updatePushupCount(int newCount) async {
 //   }
 // }
 
-Future<void> printIMPVALUESDatabaseContents() async {
-  final impDataList = boximportantValues.values.toList();
-  print('Database : ');
-  for (final impData in impDataList) {
-    print('Field: ${impData.field}, Value: ${impData.value}');
-  }
-  print('funtion check');
-}
+// Future<void> printIMPVALUESDatabaseContents() async {
+//   final impDataList = boximportantValues.values.toList();
+//   print('Database : ');
+//   for (final impData in impDataList) {
+//     print('Field: ${impData.field}, Value: ${impData.value}');
+//   }
+//   print('funtion check');
+// }
 
 class PushUpApp extends StatelessWidget {
   const PushUpApp({super.key});
@@ -335,22 +336,22 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Future<void> getIMPvaluesFromDatabase() async {
-    int db_setsize;
-    int db_dailytarget;
+    int dbSetsize;
+    int dbDailytarget;
 
     final impValuesList = boximportantValues.values.toList();
 
     for (final impData in impValuesList) {
-      if (impData.fiels == 'setsize') {
-        db_setsize = impData.value;
-        setSize = db_setsize;
+      if (impData.field == 'setsize') {
+        dbSetsize = impData.value;
+        setSize = dbSetsize;
         setState(() {});
-        print('Set Size Retrieved');
-      } else if (impData.fiels == 'dailytarget') {
-        db_dailytarget = impData.value;
-        dailyTarget = db_dailytarget;
+        // print('Set Size Retrieved');
+      } else if (impData.field == 'dailytarget') {
+        dbDailytarget = impData.value;
+        dailyTarget = dbDailytarget;
         setState(() {});
-        print('Daily Target Retrieved');
+        // print('Daily Target Retrieved');
       }
     }
   }
