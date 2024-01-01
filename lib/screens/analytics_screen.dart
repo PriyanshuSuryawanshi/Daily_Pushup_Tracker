@@ -96,7 +96,7 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
                           Row(
                             children: [
                               AnalyticsCard(
-                                displayText: 'Till Today',
+                                displayText: 'Till Date',
                                 value: totalcount(),
                               ),
                               AnalyticsCard(
