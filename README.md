@@ -1,2 +1,2 @@
-# daily_pushup_tracker
+# Daily Pushup Tracker
 
